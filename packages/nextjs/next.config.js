@@ -16,7 +16,7 @@ const nextConfig = {
   },
   env: {
     // SIPPP_APP_KEY: '0x243d056548b2ed6b732f834fd3800a6cd838bc0bca1df7001d9afdb915d80739',
-    SIPPP_APP_KEY: '0x39ba82e1faefdb970761ace6a1fc72cd8f29b56db8545236a5ac74416549f232'
+    SIPPP_APP_KEY: process.env.NEXT_PUBLIC_SIPPP_APP_KEY ?? "",
     // SIPPP_APP_KEY: '39ba82e1faefdb970761ace6a1fc72cd8f29b56db8545236a5ac74416549f232'
   },
 };

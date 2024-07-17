@@ -2,32 +2,12 @@
 
 import { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { decodeEventLog } from "viem";
+import { Hex, createWalletClient, custom, decodeEventLog, recoverMessageAddress, verifyMessage } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
 import { BarsArrowUpIcon } from "@heroicons/react/20/solid";
 import { ContractUI } from "~~/app/debug/_components/contract";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
-//   createWalletClient,
-//   custom,
-//   Hex,
-//   verifyMessage,
-//   recoverPublicKey,
-//   recoverAddress,
-//   recoverMessageAddress,
-// hashMessage } from 'viem';
-// import { privateKeyToAccount } from 'viem/accounts';
-// import { hexToUint8Array, uint8ArrayToHex } from 'uint8array-extras';
-// import { ed25519ctx, ed25519ph } from '@noble/curves/ed25519'; // Variants from RFC8032: with context, prehashed
-// import { ed25519 } from '@noble/curves/ed25519';
-// import { x25519 } from '@noble/curves/ed25519'; // ECDH using curve25519 aka x25519
-// import { edwardsToMontgomeryPub, edwardsToMontgomeryPriv } from '@noble/curves/ed25519'; // ed25519 => x25519 conversion
-// import { testEd25519 } from '../../components/sign/ed25519';
-// import { getAppPubKey, getAppAddress, appSign } from "~~/utils/sign-verify-js-sol/secp256k1";
-// import { signMessageWithPrivateKey } from "~~/utils/sign-verify-js-sol/chatgpt";
-import { deriveEthereumAddress } from "~~/utils/sign-verify-js-sol/chatgpt_address";
-
-// import { sha256 } from '@noble/hashes/sha256';
-// import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
 
 const selectedContractStorageKey = "scaffoldEth2.selectedContract";
 const contractsData = getAllContracts();
@@ -41,98 +21,39 @@ export function DebugContracts() {
   );
 
   useEffect(() => {
+    console.log(" ::: TESTING VIEM ::: ");
+    console.log(" ");
     (async () => {
-      console.log(" ");
-      console.log(" ::: TESTING Secp256k1 ::: ");
-      console.log(" ");
+      const account = privateKeyToAccount(process.env.NEXT_PUBLIC_SIPPP_APP_KEY as Hex);
+      console.log("account: ", account.address);
+      const walletClient = createWalletClient({
+        account,
+        transport: custom(window.ethereum),
+      });
 
-      // const ADDY = '0x2C80552A6f2FD1b32d7783E4c5086899da3933b8'
-      const ADDY = "0x2C80552A6f2FD1b32d7783E4c5086899da3933b8";
+      // Just send whatever as a string instead of a hex.
+      const msgString = "hello world";
 
-      // Derive the Ethereum address
-      const ethereumAddress = deriveEthereumAddress();
-      console.log("Derived Ethereum Address:", ethereumAddress);
-      console.log("Expected Ethereum Address:", ADDY);
+      const signature = await walletClient.signMessage({
+        message: msgString,
+      });
+      console.log("SIGNATURE :: ", signature);
 
-      // const { messageHash, signature, signerAddress } = await signMessageWithPrivateKey();
+      const sigMsgAddy = await recoverMessageAddress({
+        message: msgString,
+        signature: signature,
+      });
+      console.log("SIGNATURE MESSAGE ADDRESS :: ", sigMsgAddy);
 
-      // console.log('CHAT GPT OUT ::',{
-      //   messageHash,
-      //   signature,
-      //   signerAddress
-      // });
-
-      // const SIPPP_PUBKEY = getAppPubKey();
-      // const SIPPP_ADDY = getAppAddress();
-
-      // // Hash the message
-      // const messageHash = sha256('hello world');
-      // // Pad the message hash to bytes32
-      // const messageHashBuffer = Buffer.alloc(32);
-      // Buffer.from(messageHash).copy(messageHashBuffer);
-      // // Sign the message hash
-      // const signature = await appSign(messageHash);
-
-      // console.log('SIPPP_PUBKEY ::: ', bytesToHex(SIPPP_PUBKEY))
-      // console.log('SIPPP_ADDY ::::: ', SIPPP_ADDY)
-      // console.log('EXPECTED ADDY :: ', ADDY)
-      // console.log('SIGNATURE :::::: ', signature)
-      // console.log('MESSAGE HASH :: ', messageHash)
-
-      console.log(" ");
-      console.log(" ::: TESTING Secp256k1 ::: ");
-      console.log(" ");
+      const valid = await verifyMessage({
+        address: account.address,
+        message: msgString,
+        signature,
+      });
+      console.log("VALID :: ", valid);
     })();
-
-    // console.log(" ::: TESTING VIEM ::: ");
-    // console.log(" ");
-    // (async () => {
-    //   const account = privateKeyToAccount(process.env.SIPPP_APP_KEY as Hex);
-    //   console.log('account: ', account.address)
-    //   const walletClient = createWalletClient({
-    //     account,
-    //     transport: custom(window.ethereum),
-    //   });
-
-    //   const msgString = 'hello world';
-    //   const encoder = /*#__PURE__*/ new TextEncoder();
-    //   const hashedMsg = hashMessage(msgString);
-    //   const bytesMsg = encoder.encode(msgString);
-    //   console.log('HASHED MESSAGE :: ', hashedMsg)
-    //   console.log('BYTES MESSAGE  :: ', bytesMsg)
-
-    //   const signature = await walletClient.signMessage({
-    //     message: hashedMsg,
-    //   });
-    //   console.log('SIGNATURE :: ', signature)
-
-    //   const sigPubKey = await recoverPublicKey({
-    //     hash: hashedMsg,
-    //     signature: signature
-    //   })
-    //   console.log('SIGNATURE PUB KEY :: ', sigPubKey)
-
-    //   const sigAddy = await recoverAddress({
-    //     hash: hashedMsg,
-    //     signature: signature
-    //   })
-    //   console.log('SIGNATURE ADDRESS :: ', sigAddy)
-
-    //   const sigMsgAddy = await recoverMessageAddress({
-    //     message: hashedMsg,
-    //     signature: signature
-    //   })
-    //   console.log('SIGNATURE MESSAGE ADDRESS :: ', sigMsgAddy)
-
-    //   const valid = await verifyMessage({
-    //     address: account.address,
-    //     message: 'hello world',
-    //     signature,
-    //   });
-    //   console.log('VALID :: ', valid)
-    // })();
-    // console.log(" ");
-    // console.log(" ::: TESTING VIEM ::: ");
+    console.log(" ");
+    console.log(" ::: TESTING VIEM END ::: ");
   }, []);
 
   useEffect(() => {
@@ -205,6 +126,7 @@ export function DebugContracts() {
     },
   ];
 
+  // This prints the address that was derived from the private key.
   console.log(
     "Decode 1 :: ",
     decodeEventLog({
@@ -214,6 +136,7 @@ export function DebugContracts() {
     }),
   );
 
+  // This prints the address that you used as ADDY above.
   console.log(
     "Decode 2 :: ",
     decodeEventLog({
