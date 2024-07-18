@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import ethers from "ethers";
 import { useLocalStorage } from "usehooks-ts";
 import { decodeEventLog } from "viem";
 import { BarsArrowUpIcon } from "@heroicons/react/20/solid";
@@ -24,10 +25,21 @@ import { getAllContracts } from "~~/utils/scaffold-eth/contractsData";
 // import { testEd25519 } from '../../components/sign/ed25519';
 // import { getAppPubKey, getAppAddress, appSign } from "~~/utils/sign-verify-js-sol/secp256k1";
 // import { signMessageWithPrivateKey } from "~~/utils/sign-verify-js-sol/chatgpt";
-import { deriveEthereumAddress } from "~~/utils/sign-verify-js-sol/chatgpt_address";
+// import { deriveEthereumAddress } from "~~/utils/sign-verify-js-sol/chatgpt_address";
+import { contract, signer } from "~~/utils/sign-verify-js-sol/ethers_sepolia";
 
 // import { sha256 } from '@noble/hashes/sha256';
 // import { bytesToHex, hexToBytes } from '@noble/hashes/utils';
+
+// import EC from "elliptic";  // require('elliptic').ec;
+// // import { secp256k1 } from '@noble/curves/secp256k1';
+// import BN from "bn.js";  // require('bn.js');
+// Apply the Keccak-256 hash function
+// import keccak256 from "js-sha3";  // require('js-sha3').keccak256;
+
+// Elliptic Curve used by Ethereum that is secp526k1
+// const ec = new EC.ec('secp256k1');
+// const SK = new BN('DC38EE117CAE37750EB1ECC5CFD3DE8E85963B481B93E732C5D0CB66EE6B0C9D', 16);
 
 const selectedContractStorageKey = "scaffoldEth2.selectedContract";
 const contractsData = getAllContracts();
@@ -49,9 +61,44 @@ export function DebugContracts() {
       // const ADDY = '0x2C80552A6f2FD1b32d7783E4c5086899da3933b8'
       const ADDY = "0x2C80552A6f2FD1b32d7783E4c5086899da3933b8";
 
+      // Our message
+      const message = "Hello World";
+
+      // The raw signature; 65 bytes
+      const rawSig = await signer.signMessage(message);
+      // '0xa617d0558818c7a479d5063987981b59d6e619332ef52249be8243572ef1086807e381afe644d9bb56b213f6e08374c893db308ac1a5ae2bf8b33bcddcb0f76a1b'
+
+      // Converting it to a Signature object provides more
+      // flexibility, such as using it as a struct
+      const sig = ethers.Signature.from(rawSig);
+      // Signature { r: "0xa617d0558818c7a479d5063987981b59d6e619332ef52249be8243572ef10868", s: "0x07e381afe644d9bb56b213f6e08374c893db308ac1a5ae2bf8b33bcddcb0f76a", yParity: 0, networkV: null }
+
+      // If the signature matches the EIP-2098 format, a Signature
+      // can be passed as the struct value directly, since the
+      // parser will pull out the matching struct keys from sig.
+      console.log("recoverStringFromCompact(message, sig) ::: ", await contract.recoverStringFromCompact(message, sig));
+      // '0x0A489345F9E9bc5254E18dd14fA7ECfDB2cE5f21'
+
+      // Likewise, if the struct keys match an expanded signature
+      // struct, it can also be passed as the struct value directly.
+      console.log("recoverStringFromExpanded(message, sig)", await contract.recoverStringFromExpanded(message, sig));
+      // '0x0A489345F9E9bc5254E18dd14fA7ECfDB2cE5f21'
+
+      // If using an older API which requires the v, r and s be passed
+      // separately, those members are present on the Signature.
+      console.log(
+        "recoverStringFromVRS(message, sig.v, sig.r, sig.s)",
+        await contract.recoverStringFromVRS(message, sig.v, sig.r, sig.s),
+      );
+      // '0x0A489345F9E9bc5254E18dd14fA7ECfDB2cE5f21'
+
+      // Or if using an API that expects a raw signature.
+      console.log("recoverStringFromRaw(message, rawSig)", await contract.recoverStringFromRaw(message, rawSig));
+      // '0x0A489345F9E9bc5254E18dd14fA7ECfDB2cE5f21'
+
       // Derive the Ethereum address
-      const ethereumAddress = deriveEthereumAddress();
-      console.log("Derived Ethereum Address:", ethereumAddress);
+      // const ethereumAddress = deriveEthereumAddress();
+      // console.log("Derived Ethereum Address:", ethereumAddress);
       console.log("Expected Ethereum Address:", ADDY);
 
       // const { messageHash, signature, signerAddress } = await signMessageWithPrivateKey();
