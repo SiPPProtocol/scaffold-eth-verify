@@ -23,10 +23,10 @@ const deploySiPPProvenance: DeployFunction = async function (hre: HardhatRuntime
   // const publicAddy = "0x2C80552A6f2FD1b32d7783E4c5086899da3933b8";
   const { deploy } = hre.deployments;
 
-  await deploy("ethers_sepolia", {
+  await deploy("SiPPP", {
     from: deployer,
     // Contract constructor arguments
-    args: [],
+    args: ["0x2C80552A6f2FD1b32d7783E4c5086899da3933b8", "0x2C80552A6f2FD1b32d7783E4c5086899da3933b8"],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.

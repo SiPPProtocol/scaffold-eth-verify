@@ -6,14 +6,196 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
   31337: {
-    SipppAES: {
+    RecoverMessage: {
       address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [
             {
+              internalType: "bytes32",
+              name: "hash",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "bytes32",
+                  name: "r",
+                  type: "bytes32",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "yParityAndS",
+                  type: "bytes32",
+                },
+              ],
+              internalType: "struct RecoverMessage.SignatureCompact",
+              name: "sig",
+              type: "tuple",
+            },
+          ],
+          name: "recoverHashFromCompact",
+          outputs: [
+            {
               internalType: "address",
-              name: "_publicKey",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              components: [
+                {
+                  internalType: "bytes32",
+                  name: "r",
+                  type: "bytes32",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "yParityAndS",
+                  type: "bytes32",
+                },
+              ],
+              internalType: "struct RecoverMessage.SignatureCompact",
+              name: "sig",
+              type: "tuple",
+            },
+          ],
+          name: "recoverStringFromCompact",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint8",
+                  name: "v",
+                  type: "uint8",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "r",
+                  type: "bytes32",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "s",
+                  type: "bytes32",
+                },
+              ],
+              internalType: "struct RecoverMessage.SignatureExpanded",
+              name: "sig",
+              type: "tuple",
+            },
+          ],
+          name: "recoverStringFromExpanded",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              internalType: "bytes",
+              name: "sig",
+              type: "bytes",
+            },
+          ],
+          name: "recoverStringFromRaw",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "v",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "r",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "s",
+              type: "bytes32",
+            },
+          ],
+          name: "recoverStringFromVRS",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+      ],
+      inheritedFunctions: {},
+    },
+    SiPPP: {
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_admin",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_publicAddy",
               type: "address",
             },
           ],
@@ -21,16 +203,144 @@ const deployedContracts = {
           type: "constructor",
         },
         {
+          inputs: [],
+          name: "OnlyAdmin",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "OnlyApp",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "PhotoNotFound",
+          type: "error",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "photoHash",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          name: "PhotoRegistered",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "string",
+              name: "_photoHash",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "requester",
+              type: "address",
+            },
+          ],
+          name: "PhotoVerified",
+          type: "event",
+        },
+        {
           anonymous: false,
           inputs: [
             {
               indexed: false,
               internalType: "address",
-              name: "publicKey",
+              name: "publicAddy",
               type: "address",
             },
           ],
-          name: "PublicKey",
+          name: "PublicAddy",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "previousAdminRole",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "newAdminRole",
+              type: "bytes32",
+            },
+          ],
+          name: "RoleAdminChanged",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleGranted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+          ],
+          name: "RoleRevoked",
           type: "event",
         },
         {
@@ -47,23 +357,451 @@ const deployedContracts = {
           type: "event",
         },
         {
+          inputs: [],
+          name: "APP_BANNED",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "APP_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "DEFAULT_ADMIN_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "bytes32",
-              name: "data",
+              name: "role",
+              type: "bytes32",
+            },
+          ],
+          name: "getRoleAdmin",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
               type: "bytes32",
             },
             {
-              internalType: "bytes",
-              name: "signature",
-              type: "bytes",
+              internalType: "address",
+              name: "account",
+              type: "address",
             },
           ],
-          name: "verifySignedHashIsSipppSigned",
+          name: "grantRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "hasRole",
           outputs: [
             {
               internalType: "bool",
-              name: "verified",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "hash",
+              type: "bytes32",
+            },
+            {
+              components: [
+                {
+                  internalType: "bytes32",
+                  name: "r",
+                  type: "bytes32",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "yParityAndS",
+                  type: "bytes32",
+                },
+              ],
+              internalType: "struct RecoverMessage.SignatureCompact",
+              name: "sig",
+              type: "tuple",
+            },
+          ],
+          name: "recoverHashFromCompact",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              components: [
+                {
+                  internalType: "bytes32",
+                  name: "r",
+                  type: "bytes32",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "yParityAndS",
+                  type: "bytes32",
+                },
+              ],
+              internalType: "struct RecoverMessage.SignatureCompact",
+              name: "sig",
+              type: "tuple",
+            },
+          ],
+          name: "recoverStringFromCompact",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              components: [
+                {
+                  internalType: "uint8",
+                  name: "v",
+                  type: "uint8",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "r",
+                  type: "bytes32",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "s",
+                  type: "bytes32",
+                },
+              ],
+              internalType: "struct RecoverMessage.SignatureExpanded",
+              name: "sig",
+              type: "tuple",
+            },
+          ],
+          name: "recoverStringFromExpanded",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              internalType: "bytes",
+              name: "sig",
+              type: "bytes",
+            },
+          ],
+          name: "recoverStringFromRaw",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              internalType: "uint8",
+              name: "v",
+              type: "uint8",
+            },
+            {
+              internalType: "bytes32",
+              name: "r",
+              type: "bytes32",
+            },
+            {
+              internalType: "bytes32",
+              name: "s",
+              type: "bytes32",
+            },
+          ],
+          name: "recoverStringFromVRS",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_wallet",
+              type: "address",
+            },
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "photoIpfsHash",
+                  type: "string",
+                },
+                {
+                  internalType: "uint256",
+                  name: "pinTime",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "pinSize",
+                  type: "uint256",
+                },
+                {
+                  internalType: "bytes",
+                  name: "rawSig",
+                  type: "bytes",
+                },
+                {
+                  internalType: "uint256",
+                  name: "timestamp",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct SiPPP.TransactionData",
+              name: "_sipppTxn",
+              type: "tuple",
+            },
+          ],
+          name: "registerPhoto",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "renounceRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes32",
+              name: "role",
+              type: "bytes32",
+            },
+            {
+              internalType: "address",
+              name: "account",
+              type: "address",
+            },
+          ],
+          name: "revokeRole",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "bytes4",
+              name: "interfaceId",
+              type: "bytes4",
+            },
+          ],
+          name: "supportsInterface",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_publicAddy",
+              type: "address",
+            },
+          ],
+          name: "updatePubAddy",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "userPhotos",
+          outputs: [
+            {
+              internalType: "string",
+              name: "photoIpfsHash",
+              type: "string",
+            },
+            {
+              internalType: "uint256",
+              name: "pinTime",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "pinSize",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes",
+              name: "rawSig",
+              type: "bytes",
+            },
+            {
+              internalType: "uint256",
+              name: "timestamp",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "message",
+              type: "string",
+            },
+            {
+              internalType: "bytes",
+              name: "rawSig",
+              type: "bytes",
+            },
+          ],
+          name: "verifyApp",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
               type: "bool",
             },
           ],
@@ -73,22 +811,17 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "bytes32",
-              name: "messageHash",
-              type: "bytes32",
-            },
-            {
-              internalType: "bytes",
-              name: "signature",
-              type: "bytes",
-            },
-            {
               internalType: "address",
-              name: "signer",
+              name: "_wallet",
               type: "address",
             },
+            {
+              internalType: "string",
+              name: "_photoIpfsHash",
+              type: "string",
+            },
           ],
-          name: "verifySippp",
+          name: "verifyPhotoProvenance",
           outputs: [
             {
               internalType: "bool",
@@ -96,11 +829,19 @@ const deployedContracts = {
               type: "bool",
             },
           ],
-          stateMutability: "pure",
+          stateMutability: "nonpayable",
           type: "function",
         },
       ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        DEFAULT_ADMIN_ROLE: "@openzeppelin/contracts/access/AccessControl.sol",
+        getRoleAdmin: "@openzeppelin/contracts/access/AccessControl.sol",
+        grantRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        hasRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        renounceRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        revokeRole: "@openzeppelin/contracts/access/AccessControl.sol",
+        supportsInterface: "@openzeppelin/contracts/access/AccessControl.sol",
+      },
     },
   },
 } as const;

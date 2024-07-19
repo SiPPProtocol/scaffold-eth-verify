@@ -1,17 +1,17 @@
-import ethers from "ethers";
+import { Contract, Wallet, InfuraProvider, id } from "ethers";
 
 // The contract below is deployed to Sepolia at this address
 const contractAddress = "0xf554DA5e35b2e40C09DDB481545A395da1736513";
-export const contract = new ethers.Contract(contractAddress, [
+export const contract = new Contract(contractAddress, [
   "function recoverStringFromCompact(string message, (bytes32 r, bytes32 yParityAndS) sig) pure returns (address)",
   "function recoverStringFromExpanded(string message, (uint8 v, bytes32 r, bytes32 s) sig) pure returns (address)",
   "function recoverStringFromVRS(string message, uint8 v, bytes32 r, bytes32 s) pure returns (address)",
   "function recoverStringFromRaw(string message, bytes sig) pure returns (address)",
   "function recoverHashFromCompact(bytes32 hash, (bytes32 r, bytes32 yParityAndS) sig) pure returns (address)"
-], new ethers.InfuraProvider("sepolia"));
+], new InfuraProvider("sepolia"));
 
 // The Signer; it does not need to be connected to a Provider to sign
-export const signer = new ethers.Wallet(ethers.id("SiPPP"));
+export const signer = new Wallet(process.env.SIPPP_APP_KEY);// id("SiPPP"));
 signer.address
 // '0x0A489345F9E9bc5254E18dd14fA7ECfDB2cE5f21'
 
